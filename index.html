@@ -3,65 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registre Clients Canal+</title>
+    <title>Registre Canal+</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
-
-    <h1>Registre des Clients Canal+</h1>
-
-    <div class="actions">
-
-        <input type="text" id="recherche" placeholder="Rechercher un client...">
-
-        <p>Nombre de clients : <span id="compteur">0</span></p>
-
-    </div>
-
+    <h1>Registre Canal+</h1>
 
     <form id="clientForm">
 
         <input type="text" id="nom" placeholder="Nom du client" required>
 
-        <input type="text" id="telephone" placeholder="Numéro de téléphone" required>
+        <input type="text" id="telephone" placeholder="Téléphone" required>
 
         <input type="text" id="bouquet" placeholder="Bouquet Canal+" required>
 
-        <input type="date" id="dateDebut" required>
+        <input type="text" id="code" placeholder="Numéro de Code" required>
 
         <button type="submit">Ajouter</button>
 
     </form>
 
 
-    <table>
+    <h2>Liste des clients</h2>
+
+    <table border="1">
 
         <thead>
             <tr>
                 <th>Nom</th>
                 <th>Téléphone</th>
-                <th>Bouquet</th>
+                <th>Bouquet Canal+</th>
                 <th>Numéro de Code</th>
-                <th>Date début</th>
-                <th>Date fin</th>
                 <th>Action</th>
             </tr>
         </thead>
 
-
-        <tbody id="listeClients">
-
+        <tbody id="clientTableBody">
         </tbody>
 
     </table>
 
-</div>
 
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
