@@ -1,123 +1,63 @@
+// Récupération des éléments
 const form = document.getElementById("clientForm");
-const listeClients = document.getElementById("listeClients");
-const recherche = document.getElementById("recherche");
-const compteur = document.getElementById("compteur");
+const tableBody = document.getElementById("clientTableBody");
 
-let clients = [];
+let clients = JSON.parse(localStorage.getItem("clients")) || [];
 
+// Afficher les clients
+function afficherClients() {
+    tableBody.innerHTML = "";
+
+    clients.forEach((client, index) => {
+        const ligne = document.createElement("tr");
+
+        ligne.innerHTML = `
+            <td>${client.nom}</td>
+            <td>${client.telephone}</td>
+            <td>${client.bouquet}</td>
+            <td>${client.code}</td>
+            <td>
+                <button onclick="supprimerClient(${index})">
+                    Supprimer
+                </button>
+            </td>
+        `;
+
+        tableBody.appendChild(ligne);
+    });
+}
 
 // Ajouter un client
-form.addEventListener("submit", function(event) {
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
 
-    event.preventDefault();
+    const nom = document.getElementById("nom").value;
+    const telephone = document.getElementById("telephone").value;
+    const bouquet = document.getElementById("bouquet").value;
+    const code = document.getElementById("code").value;
 
-    let nom = document.getElementById("nom").value;
-    let telephone = document.getElementById("telephone").value;
-    let bouquet = document.getElementById("bouquet").value;
-    let dateDebut = document.getElementById("dateDebut").value;
-
-
-    let date = new Date(dateDebut);
-    date.setMonth(date.getMonth() + 1);
-
-    let dateFin = date.toISOString().split("T")[0];
-
-
-    let client = {
-        nom,
-        telephone,
-        bouquet,
-        dateDebut,
-        dateFin
+    const nouveauClient = {
+        nom: nom,
+        telephone: telephone,
+        bouquet: bouquet,
+        code: code
     };
 
+    clients.push(nouveauClient);
 
-    clients.push(client);
+    localStorage.setItem("clients", JSON.stringify(clients));
 
     afficherClients();
 
     form.reset();
-
 });
 
-
-// Afficher les clients
-function afficherClients(liste = clients) {
-
-    listeClients.innerHTML = "";
-
-    liste.forEach((client, index) => {
-
-        let ligne = document.createElement("tr");
-
-        ligne.innerHTML = `
-
-            <td>${client.nom}</td>
-            <td>${client.telephone}</td>
-            <td>${client.bouquet}</td>
-            <td>${client.dateDebut}</td>
-            <td>${client.dateFin}</td>
-
-            <td>
-                <button onclick="imprimerFiche(${index})">
-                    Imprimer
-                </button>
-            </td>
-
-        `;
-
-        listeClients.appendChild(ligne);
-
-    });
-
-
-    compteur.textContent = liste.length;
-
+// Supprimer un client
+function supprimerClient(index) {
+    clients.splice(index, 1);
+    localStorage.setItem("clients", JSON.stringify(clients));
+    afficherClients();
 }
 
-
-// Recherche d'un client
-recherche.addEventListener("input", function() {
-
-    let texte = recherche.value.toLowerCase();
-
-
-    let resultat = clients.filter(client =>
-
-        client.nom.toLowerCase().includes(texte) ||
-        client.telephone.includes(texte)
-
-    );
-
-
-    afficherClients(resultat);
-
-});
-
-
-// Impression de la fiche client
-function imprimerFiche(index) {
-
-    let client = clients[index];
-
-
-    let fiche = `
-    
-    REGISTRE CANAL+
-
-    Nom : ${client.nom}
-    Téléphone : ${client.telephone}
-    Bouquet : ${client.bouquet}
-    Date début : ${client.dateDebut}
-    Date fin : ${client.dateFin}
-
-    `;
-
-
-    let fenetre = window.open("");
-
-    fenetre.document.write("<pre>" + fiche + "</pre>");
-
-    fenetre.print();
-
-}
+// Chargement initial
+afficherClients();
