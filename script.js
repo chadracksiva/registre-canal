@@ -1,63 +1,75 @@
-// Récupération des éléments
-const form = document.getElementById("clientForm");
-const tableBody = document.getElementById("clientTableBody");
+// ============================================
+// INITIALISATION
+// ============================================
 
-let clients = JSON.parse(localStorage.getItem("clients")) || [];
+// Données de base
+const defaultPassword = 'admin123';
+let currentUser = null;
+let clients = [];
+let operations = [];
 
-// Afficher les clients
-function afficherClients() {
-    tableBody.innerHTML = "";
-
-    clients.forEach((client, index) => {
-        const ligne = document.createElement("tr");
-
-        ligne.innerHTML = `
-            <td>${client.nom}</td>
-            <td>${client.telephone}</td>
-            <td>${client.bouquet}</td>
-            <td>${client.code}</td>
-            <td>
-                <button onclick="supprimerClient(${index})">
-                    Supprimer
-                </button>
-            </td>
-        `;
-
-        tableBody.appendChild(ligne);
-    });
-}
-
-// Ajouter un client
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const nom = document.getElementById("nom").value;
-    const telephone = document.getElementById("telephone").value;
-    const bouquet = document.getElementById("bouquet").value;
-    const code = document.getElementById("code").value;
-
-    const nouveauClient = {
-        nom: nom,
-        telephone: telephone,
-        bouquet: bouquet,
-        code: code
-    };
-
-    clients.push(nouveauClient);
-
-    localStorage.setItem("clients", JSON.stringify(clients));
-
-    afficherClients();
-
-    form.reset();
+// Charger les données au démarrage
+document.addEventListener('DOMContentLoaded', () => {
+    loadFromLocalStorage();
+    setDefaultDateToday();
+    setupEventListeners();
+    
+    // Si l'utilisateur est connecté, afficher le tableau de bord
+    if (currentUser) {
+        showScreen('dashboardScreen');
+    } else {
+        showScreen('loginScreen');
+    }
 });
 
-// Supprimer un client
-function supprimerClient(index) {
-    clients.splice(index, 1);
-    localStorage.setItem("clients", JSON.stringify(clients));
-    afficherClients();
+// ============================================
+// GESTION DU STOCKAGE (LocalStorage)
+// ============================================
+
+function saveToLocalStorage() {
+    localStorage.setItem('clients', JSON.stringify(clients));
+    localStorage.setItem('operations', JSON.stringify(operations));
+    localStorage.setItem('password', defaultPassword);
 }
 
-// Chargement initial
-afficherClients();
+function loadFromLocalStorage() {
+    const savedClients = localStorage.getItem('clients');
+    const savedOperations = localStorage.getItem('operations');
+    
+    if (savedClients) clients = JSON.parse(savedClients);
+    if (savedOperations) operations = JSON.parse(savedOperations);
+}
+
+// ============================================
+// GESTION DES ÉCRANS
+// ============================================
+
+function showScreen(screenId) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => screen.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
+
+// ============================================
+// CONNEXION
+// ============================================
+
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorElement = document.getElementById('loginError');
+    
+    if (password === defaultPassword) {
+        currentUser = username;
+        localStorage.setItem('currentUser', username);
+        document.getElementById('loginForm').reset();
+        errorElement.textContent = '';
+        showScreen('dashboardScreen');
+    } else {
+        errorElement.textContent = '❌ Mot de passe incorrect!';
+    }
+});
+
+document.getElementById('logoutBtn').addEventListener('
