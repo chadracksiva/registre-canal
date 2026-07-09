@@ -18,7 +18,6 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <!-- Correction ici : ajout de autocapitalize, autocorrect et spellcheck -->
                     <input type="password" id="password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
@@ -62,7 +61,7 @@
         <header>
             <button id="backFromRegistre" class="btn btn-secondary">⬅️ Retour</button>
             <h2>Registre Canal+</h2>
-            <button id="newSubscriptionBtn" class="btn btn-primary">+ Nouvel Abonnement</button>
+            <button id="newSubscriptionBtn" class="btn btn-primary">+ Nouveau client</button>
         </header>
         
         <div class="stats-bar">
@@ -101,23 +100,11 @@
             <button id="newOperationBtn" class="btn btn-primary">+ Nouvelle Opération</button>
         </header>
 
-        <div class="stats-grid-compta">
-            <div class="stat-box">
-                <h4>Entrées (Jour)</h4>
-                <p id="entreeDay" class="positive">0.00 MAD</p>
-            </div>
-            <div class="stat-box">
-                <h4>Retraits (Jour)</h4>
-                <p id="retraitDay" class="negative">0.00 MAD</p>
-            </div>
-            <div class="stat-box">
-                <h4>Solde (Jour)</h4>
-                <p id="soldeDay">0.00 MAD</p>
-            </div>
-            <div class="stat-box total-box">
-                <h4>Solde Général</h4>
-                <p id="soldeGeneral">0.00 MAD</p>
-            </div>
+        <div class="stats-bar grid-4">
+            <div class="stat-item">Entrées Jour: <span id="entreeDay" class="positive">0.00 MAD</span></div>
+            <div class="stat-item">Retraits Jour: <span id="retraitDay" class="negative">0.00 MAD</span></div>
+            <div class="stat-item">Solde Jour: <span id="soldeDay">0.00 MAD</span></div>
+            <div class="stat-item highlight">Solde Général: <span id="soldeGeneral">0.00 MAD</span></div>
         </div>
 
         <div class="table-container">
@@ -141,23 +128,16 @@
     <div id="statistiquesScreen" class="screen">
         <header>
             <button id="backFromStatistiques" class="btn btn-secondary">⬅️ Retour</button>
-            <h2>Statistiques & Analyses</h2>
+            <h2>Statistiques Générales</h2>
         </header>
-        <main class="stats-detailed">
-            <div class="stat-card-large">
-                <h3>Abonnements</h3>
-                <p>Total clients enregistrés : <strong id="statTotalClients">0</strong></p>
-                <p>Abonnements actifs : <strong id="statActiveSubscriptions" class="positive">0</strong></p>
-                <p>Abonnements expirés : <strong id="statExpiredSubscriptions" class="negative">0</strong></p>
-            </div>
-            <div class="stat-card-large">
-                <h3>Finances</h3>
-                <p>Recettes aujourd'hui : <strong id="statRevenueDay" class="positive">0.00 MAD</strong></p>
-                <p>Recettes (Mois en cours) : <strong id="statRevenueMonth" class="positive">0.00 MAD</strong></p>
-                <p>Dépenses (Mois en cours) : <strong id="statExpensesMonth" class="negative">0.00 MAD</strong></p>
-                <hr>
-                <p>Caisse disponible actuelle : <strong id="statCurrentBalance">0.00 MAD</strong></p>
-            </div>
+        <main class="stats-grid">
+            <div class="stat-box"><h3>Total Clients Enregistrés</h3><p id="statTotalClients">0</p></div>
+            <div class="stat-box positive"><h3>Abonnements Actifs</h3><p id="statActiveSubscriptions">0</p></div>
+            <div class="stat-box negative"><h3>Abonnements Expirés</h3><p id="statExpiredSubscriptions">0</p></div>
+            <div class="stat-box"><h3>Recettes du Jour</h3><p id="statRevenueDay">0.00 MAD</p></div>
+            <div class="stat-box"><h3>Recettes du Mois</h3><p id="statRevenueMonth">0.00 MAD</p></div>
+            <div class="stat-box negative"><h3>Dépenses du Mois</h3><p id="statExpensesMonth">0.00 MAD</p></div>
+            <div class="stat-box highlight"><h3>Solde de Caisse Actuel</h3><p id="statCurrentBalance">0.00 MAD</p></div>
         </main>
     </div>
 
@@ -168,77 +148,75 @@
             <h2>Paramètres & Sécurité</h2>
         </header>
         <main class="settings-container">
-            <section class="settings-section">
+            <div class="settings-section">
                 <h3>Sécurité</h3>
                 <div class="form-group">
                     <label for="newPassword">Changer le mot de passe</label>
                     <input type="password" id="newPassword" placeholder="Nouveau mot de passe">
                     <button id="changePasswordBtn" class="btn btn-secondary" style="margin-top: 10px;">Mettre à jour</button>
                 </div>
-            </section>
-
-            <section class="settings-section">
+            </div>
+            <div class="settings-section">
                 <h3>Sauvegarde des Données</h3>
-                <p>Téléchargez une copie de vos données pour éviter de les perdre.</p>
-                <button id="backupBtn" class="btn btn-primary">📥 Exporter la sauvegarde (JSON)</button>
-                
-                <p style="margin-top: 20px;">Restaurer des données à partir d'un fichier de sauvegarde :</p>
-                <input type="file" id="restoreFile" accept=".json" style="display: none;">
-                <button id="restoreBtn" class="btn btn-secondary">📤 Importer une sauvegarde</button>
-            </section>
-
-            <section class="settings-section danger-zone">
-                <h3>Zone Dangereuse</h3>
-                <p>Cette action effacera définitivement tous les clients et toutes les opérations comptables de cet appareil.</p>
+                <p>Exportez ou restaurez vos données locales pour ne rien perdre.</p>
+                <div class="action-buttons horizontal">
+                    <button id="backupBtn" class="btn btn-success">📥 Exporter la sauvegarde</button>
+                    <button id="restoreBtn" class="btn btn-primary">📤 Importer une sauvegarde</button>
+                    <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                </div>
+            </div>
+            <div class="settings-section danger-zone">
+                <h3>Zone de Danger</h3>
+                <p>Cette action effacera définitivement l'ensemble des clients et opérations de la mémoire.</p>
                 <button id="clearDataBtn" class="btn btn-danger">🗑️ Réinitialiser l'application</button>
-            </section>
+            </div>
         </main>
     </div>
 
-    <!-- MODAL ABONNEMENT -->
+    <!-- FENÊTRE MODALE : ABONNEMENT -->
     <div id="subscriptionModal" class="modal">
         <div class="modal-content">
             <span id="closeModal" class="close-btn">&times;</span>
-            <h3 id="modalTitle">Nouvel Abonnement</h3>
+            <h2 id="modalTitle">Enregistrer un nouveau client</h2>
             <form id="subscriptionForm">
                 <div class="form-group">
                     <label for="clientName">Nom complet du client</label>
                     <input type="text" id="clientName" required>
                 </div>
                 <div class="form-group">
-                    <label for="clientPhone">N° de Téléphone</label>
+                    <label for="clientPhone">Numéro de Téléphone</label>
                     <input type="tel" id="clientPhone" required>
                 </div>
                 <div class="form-group">
-                    <label for="decoderNumber">N° Décodeur Canal+</label>
+                    <label for="decoderNumber">Numéro de Décodeur</label>
                     <input type="text" id="decoderNumber" required>
                 </div>
                 <div class="form-group">
-                    <label for="startDate">Date de début</label>
+                    <label for="startDate">Date d'activation</label>
                     <input type="date" id="startDate" required>
                 </div>
                 <div class="form-group">
                     <label for="duration">Durée de la formule (en jours)</label>
                     <select id="duration" required>
-                        <option value="30">30 Jours (1 Mois)</option>
-                        <option value="90">90 Jours (3 Mois)</option>
-                        <option value="182">182 Jours (6 Mois)</option>
-                        <option value="365">365 Jours (1 An)</option>
+                        <option value="30" selected>1 Mois (30 jours)</option>
+                        <option value="90">3 Mois (90 jours)</option>
+                        <option value="180">6 Mois (180 jours)</option>
+                        <option value="365">1 An (365 jours)</option>
                     </select>
                 </div>
-                <div class="modal-actions">
+                <div class="action-buttons horizontal">
+                    <button type="submit" class="btn btn-success">Enregistrer le client</button>
                     <button type="button" id="cancelModal" class="btn btn-secondary">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL OPÉRATION COMPTABILITÉ -->
+    <!-- FENÊTRE MODALE : COMPTABILITÉ -->
     <div id="operationModal" class="modal">
         <div class="modal-content">
             <span id="closeOperationModal" class="close-btn">&times;</span>
-            <h3>Nouvelle Opération</h3>
+            <h2>Nouvelle Opération financière</h2>
             <form id="operationForm">
                 <div class="form-group">
                     <label for="operationDate">Date</label>
@@ -247,39 +225,39 @@
                 <div class="form-group">
                     <label for="operationType">Type de mouvement</label>
                     <select id="operationType" required>
-                        <option value="Entrée">Entrée (Recette / Vente)</option>
-                        <option value="Retrait">Retrait (Dépense / Versement)</option>
+                        <option value="Entrée" selected>Entrée de caisse (+)</option>
+                        <option value="Retrait">Retrait de caisse (-)</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="operationCategory">Catégorie</label>
                     <select id="operationCategory" required>
-                        <option value="Abonnement">Abonnement Canal+</option>
-                        <option value="Accessoires">Vente Matériel / Accessoires</option>
-                        <option value="Frais de gestion">Frais de Gestion</option>
-                        <option value="Retrait Pro">Retrait Propriétaire</option>
-                        <option value="Autre">Autre motif</option>
+                        <option value="Abonnement Canal+">Abonnement Canal+</option>
+                        <option value="Accessoires / Matériel">Accessoires / Matériel</option>
+                        <option value="Frais de Service">Frais de Service</option>
+                        <option value="Dépense courante">Dépense courante</option>
+                        <option value="Autre">Autre mouvement</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="operationDescription">Description / Détail</label>
-                    <input type="text" id="operationDescription" required placeholder="Ex: Abonnement 1Mois formule Evasion">
+                    <label for="operationDescription">Libellé / Description</label>
+                    <input type="text" id="operationDescription" required placeholder="Ex: Réabonnement formule évasion de Chadrack">
                 </div>
                 <div class="form-group">
-                    <label for="operationAmount">Montant (MAD)</label>
-                    <input type="number" id="operationAmount" step="0.01" min="0.1" required>
+                    <label for="operationAmount">Montant total (MAD)</label>
+                    <input type="number" id="operationAmount" step="0.01" min="0" required placeholder="0.00">
                 </div>
                 <div class="form-group">
-                    <label for="operationPerson">Nom de l'intervenant (Optionnel)</label>
-                    <input type="text" id="operationPerson" placeholder="Ex: Client ou Agent">
+                    <label for="operationPerson">Responsable / Opérateur</label>
+                    <input type="text" id="operationPerson" placeholder="Nom de celui qui gère">
                 </div>
                 <div class="form-group">
-                    <label for="operationObservations">Observations (Optionnel)</label>
-                    <textarea id="operationObservations" rows="2" placeholder="Notes complémentaires..."></textarea>
+                    <label for="operationObservations">Remarques / Observations</label>
+                    <textarea id="operationObservations" rows="2" placeholder="Détails supplémentaires..."></textarea>
                 </div>
-                <div class="modal-actions">
+                <div class="action-buttons horizontal">
+                    <button type="submit" class="btn btn-success">Enregistrer le mouvement</button>
                     <button type="button" id="cancelOperationModal" class="btn btn-secondary">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </form>
         </div>
