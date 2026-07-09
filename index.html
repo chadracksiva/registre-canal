@@ -3,50 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registre Canal+</title>
+    <title>Registre Canal+ - Gestion Boutique</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <!-- ÉCRAN DE CONNEXION -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <h1>📺 Registre Canal+</h1>
+            <p class="subtitle">Système de Gestion Boutique</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" id="username" placeholder="Entrez votre nom" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" placeholder="Entrez votre mot de passe" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Connexion</button>
+            </form>
+            
+            <p class="login-error" id="loginError"></p>
+            <p class="info-text">Mot de passe par défaut: admin123</p>
+        </div>
+    </div>
 
-    <h1>Registre Canal+</h1>
+    <!-- TABLEAU DE BORD -->
+    <div id="dashboardScreen" class="screen">
+        <div class="navbar">
+            <h2>📺 Registre Canal+</h2>
+            <button class="btn btn-logout" id="logoutBtn">Déconnexion</button>
+        </div>
+        
+        <div class="dashboard-container">
+            <div class="dashboard-grid">
+                <button class="dashboard-card" id="registreBtn">
+                    <span class="icon">📺</span>
+                    <h3>Registre Canal+</h3>
+                    <p>Gérer les abonnements</p>
+                </button>
+                
+                <button class="dashboard-card" id="comptabiliteBtn">
+                    <span class="icon">💰</span>
+                    <h3>Comptabilité</h3>
+                    <p>Entrées et sorties</p>
+                </button>
+                
+                <button class="dashboard-card" id="statistiquesBtn">
+                    <span class="icon">📊</span>
+                    <h3>Statistiques</h3>
+                    <p>Vue d'ensemble</p>
+                </button>
+                
+                <button class="dashboard-card" id="parametresBtn">
+                    <span class="icon">⚙️</span>
+                    <h3>Paramètres</h3>
+                    <p>Configuration</p>
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <form id="clientForm">
+    <!-- REGISTRE CANAL+ -->
+    <div id="registreScreen" class="screen">
+        <div class="navbar">
+            <h2>📺 Registre Canal+</h2>
+            <button class="btn btn-back" id="backFromRegistre">Retour</button>
+        </div>
+        
+        <div class="content-container">
+            <div class="header-section">
+                <input type="text" id="searchClients" placeholder="🔍 Rechercher un client..." class="search-input">
+                <button class="btn btn-primary" id="newSubscriptionBtn">+ Nouvel abonnement</button>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <p class="stat-label">Clients Total</p>
+                    <p class="stat-value" id="totalClients">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Actifs</p>
+                    <p class="stat-value" id="activeSubscriptions">0</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Expirés</p>
+                    <p class="stat-value" id="expiredSubscriptions">0</p>
+                </div>
+            </div>
+            
+            <table class="clients-table">
+                <thead>
+                    <tr>
+                        <th>Nom Client</th>
+                        <th>Téléphone</th>
+                        <th>Décodeur</th>
+                        <th>Début</th>
+                        <th>Fin</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTableBody">
+                    <!-- Les clients seront ajoutés ici -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        <input type="text" id="nom" placeholder="Nom du client" required>
+    <!-- MODAL NOUVEL ABONNEMENT -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nouvel abonnement</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="subscriptionForm">
+                <div class="form-group">
+                    <label for="clientName">Nom du client</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientPhone">Téléphone</label>
+                    <input type="tel" id="clientPhone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="decoderNumber">Numéro du décodeur</label>
+                    <input type="text" id="decoderNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="startDate">Date de début</label>
+                    <input type="date" id="startDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="duration">Durée (jours)</label>
+                    <select id="duration" required>
+                        <option value="30">30 jours</option>
+                        <option value="90">90 jours</option>
+                        <option value="180">180 jours</option>
+                        <option value="365">1 an</option>
+                    </select>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" id="cancelModal">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <input type="text" id="telephone" placeholder="Téléphone" required>
+    <!-- COMPTABILITÉ -->
+    <div id="comptabiliteScreen" class="screen">
+        <div class="navbar">
+            <h2>💰 Comptabilité</h2>
+            <button class="btn btn-back" id="backFromComptabilite">Retour</button>
+        </div>
+        
+        <div class="content-container">
+            <div class="header-section">
+                <button class="btn btn-primary" id="newOperationBtn">+ Nouvelle opération</button>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <p class="stat-label">Entrées Jour</p>
+                    <p class="stat-value positive" id="entreeDay">0 MAD</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Retraits Jour</p>
+                    <p class="stat-value negative" id="retraitDay">0 MAD</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Solde Jour</p>
+                    <p class="stat-value" id="soldeDay">0 MAD</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Solde Général</p>
+                    <p class="stat-value" id="soldeGeneral">0 MAD</p>
+                </div>
+            </div>
+            
+            <table class="operations-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Catégorie</th>
+                        <th>Description</th>
+                        <th>Montant</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="operationsTableBody">
+                    <!-- Les opérations seront ajoutées ici -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        <input type="text" id="bouquet" placeholder="Bouquet Canal+" required>
+    <!-- MODAL NOUVELLE OPÉRATION -->
+    <div id="operationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nouvelle opération</h3>
+                <button class="close-modal" id="closeOperationModal">&times;</button>
+            </div>
+            
+            <form id="operationForm">
+                <div class="form-group">
+                    <label for="operationDate">Date</label>
+                    <input type="date" id="operationDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationType">Type</label>
+                    <select id="operationType" required>
+                        <option value="Entrée">Entrée</option>
+                        <option value="Retrait">Retrait</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationCategory">Catégorie</label>
+                    <select id="operationCategory" required>
+                        <option value="Abonnement Canal+">Abonnement Canal+</option>
+                        <option value="Vente de matériel">Vente de matériel</option>
+                        <option value="Accessoires">Accessoires</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Loyer">Loyer</option>
+                        <option value="Salaire">Salaire</option>
+                        <option value="Achat de stock">Achat de stock</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationDescription">Description</label>
+                    <input type="text" id="operationDescription">
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationAmount">Montant (MAD)</label>
+                    <input type="number" id="operationAmount" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationPerson">Personne concernée</label>
+                    <input type="text" id="operationPerson">
+                </div>
+                
+                <div class="form-group">
+                    <label for="operationObservations">Observations</label>
+                    <textarea id="operationObservations"></textarea>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" id="cancelOperationModal">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <input type="text" id="code" placeholder="Numéro de Code" required>
+    <!-- STATISTIQUES -->
+    <div id="statistiquesScreen" class="screen">
+        <div class="navbar">
+            <h2>📊 Statistiques</h2>
+            <button class="btn btn-back" id="backFromStatistiques">Retour</button>
+        </div>
+        
+        <div class="content-container">
+            <div class="stats-grid">
+                <div class="big-stat-card">
+                    <p class="stat-label">Clients Total</p>
+                    <p class="stat-value" id="statTotalClients">0</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Abonnements Actifs</p>
+                    <p class="stat-value positive" id="statActiveSubscriptions">0</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Abonnements Expirés</p>
+                    <p class="stat-value negative" id="statExpiredSubscriptions">0</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Revenus Jour</p>
+                    <p class="stat-value positive" id="statRevenueDay">0 MAD</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Revenus Mois</p>
+                    <p class="stat-value positive" id="statRevenueMonth">0 MAD</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Dépenses Mois</p>
+                    <p class="stat-value negative" id="statExpensesMonth">0 MAD</p>
+                </div>
+                
+                <div class="big-stat-card">
+                    <p class="stat-label">Solde Actuel</p>
+                    <p class="stat-value" id="statCurrentBalance">0 MAD</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <button type="submit">Ajouter</button>
-
-    </form>
-
-
-    <h2>Liste des clients</h2>
-
-    <table border="1">
-
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Téléphone</th>
-                <th>Bouquet Canal+</th>
-                <th>Numéro de Code</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody id="clientTableBody">
-        </tbody>
-
-    </table>
-
+    <!-- PARAMÈTRES -->
+    <div id="parametresScreen" class="screen">
+        <div class="navbar">
+            <h2>⚙️ Paramètres</h2>
+            <button class="btn btn-back" id="backFromParametres">Retour</button>
+        </div>
+        
+        <div class="content-container">
+            <div class="parametres-section">
+                <h3>Sécurité</h3>
+                <div class="form-group">
+                    <label for="newPassword">Nouveau mot de passe</label>
+                    <input type="password" id="newPassword" placeholder="Entrez le nouveau mot de passe">
+                </div>
+                <button class="btn btn-primary" id="changePasswordBtn">Changer le mot de passe</button>
+            </div>
+            
+            <hr>
+            
+            <div class="parametres-section">
+                <h3>Données</h3>
+                <button class="btn btn-secondary" id="backupBtn">💾 Sauvegarder les données</button>
+                <button class="btn btn-secondary" id="restoreBtn">📥 Restaurer une sauvegarde</button>
+                <button class="btn btn-danger" id="clearDataBtn">🗑️ Vider les données</button>
+            </div>
+            
+            <input type="file" id="restoreFile" style="display:none;" accept=".json">
+        </div>
+    </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
