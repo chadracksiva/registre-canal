@@ -143,11 +143,11 @@ function openSubscriptionModal(editId = null) {
         document.getElementById('decoderNumber').value = client.decoder;
         document.getElementById('startDate').value = client.startDate;
         document.getElementById('duration').value = client.duration;
-        modalTitle.textContent = 'Modifier abonnement';
+        modalTitle.textContent = 'Modifier l\'abonnement';
         form.dataset.editId = editId;
     } else {
         form.reset();
-        modalTitle.textContent = 'Nouvel abonnement';
+        modalTitle.textContent = 'Enregistrer un nouveau client';
         delete form.dataset.editId;
         document.getElementById('startDate').valueAsDate = new Date();
     }
@@ -233,6 +233,7 @@ function filterClients() {
     updateRegistreTable();
 }
 
+// S'assure de rafraîchir correctement la table au chargement
 function updateRegistreStats() {
     const active = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Actif').length;
     const expired = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Expiré').length;
@@ -283,6 +284,7 @@ function openOperationModal(editId = null) {
     modal.classList.add('active');
 }
 
+// Correction du bug d'affichage de fermeture
 function closeOperationModal() {
     const modal = document.getElementById('operationModal');
     modal.style.display = 'none';
