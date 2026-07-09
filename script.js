@@ -46,7 +46,7 @@ function showScreen(screenId) {
 }
 
 // ============================================
-// ÉVÉNEMENTS - CONFIGURATION GENERAL
+// ÉVÉNEMENTS - CONFIGURATION GENERALE
 // ============================================
 function setupEventListeners() {
     // Connexion
@@ -100,13 +100,11 @@ function setupEventListeners() {
 }
 
 // ============================================
-// CONNEXION / DÉCONNEXION (CORRIGÉ POUR MOBILE)
+// CONNEXION / DÉCONNEXION
 // ============================================
 function handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('username').value;
-    
-    // .trim() enlève les espaces de fin/début, .toLowerCase() gère la majuscule auto sur mobile
     const password = document.getElementById('password').value.trim().toLowerCase();
     const errorElement = document.getElementById('loginError');
 
@@ -153,11 +151,14 @@ function openSubscriptionModal(editId = null) {
         delete form.dataset.editId;
         document.getElementById('startDate').valueAsDate = new Date();
     }
+    modal.style.display = 'flex'; 
     modal.classList.add('active');
 }
 
 function closeSubscriptionModal() {
-    document.getElementById('subscriptionModal').classList.remove('active');
+    const modal = document.getElementById('subscriptionModal');
+    modal.style.display = 'none';
+    modal.classList.remove('active');
     document.getElementById('subscriptionForm').reset();
 }
 
@@ -232,7 +233,6 @@ function filterClients() {
     updateRegistreTable();
 }
 
-// Correction ici pour s'assurer que la table s'actualise correctement au chargement des stats
 function updateRegistreStats() {
     const active = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Actif').length;
     const expired = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Expiré').length;
@@ -279,11 +279,14 @@ function openOperationModal(editId = null) {
         document.getElementById('operationDate').valueAsDate = new Date();
         delete form.dataset.editId;
     }
+    modal.style.display = 'flex';
     modal.classList.add('active');
 }
 
 function closeOperationModal() {
-    document.getElementById('operationModal').classList.remove('active');
+    const modal = document.getElementById('operationModal');
+    modal.style.display = 'none';
+    modal.classList.remove('active');
     document.getElementById('operationForm').reset();
 }
 
