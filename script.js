@@ -1,7 +1,6 @@
 // ============================================
 // INITIALISATION
 // ============================================
-
 const defaultPassword = 'admin123';
 let currentUser = null;
 let clients = [];
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 // GESTION DU STOCKAGE
 // ============================================
-
 function saveToLocalStorage() {
     localStorage.setItem('clients', JSON.stringify(clients));
     localStorage.setItem('operations', JSON.stringify(operations));
@@ -32,7 +30,7 @@ function loadFromLocalStorage() {
     const savedClients = localStorage.getItem('clients');
     const savedOperations = localStorage.getItem('operations');
     const savedUser = localStorage.getItem('currentUser');
-    
+
     if (savedClients) clients = JSON.parse(savedClients);
     if (savedOperations) operations = JSON.parse(savedOperations);
     if (savedUser) currentUser = savedUser;
@@ -41,7 +39,6 @@ function loadFromLocalStorage() {
 // ============================================
 // GESTION DES ÉCRANS
 // ============================================
-
 function showScreen(screenId) {
     const screens = document.querySelectorAll('.screen');
     screens.forEach(screen => screen.classList.remove('active'));
@@ -49,53 +46,49 @@ function showScreen(screenId) {
 }
 
 // ============================================
-// ÉVÉNEMENTS - CONNEXION
+// ÉVÉNEMENTS - CONFIGURATION GENERAL
 // ============================================
-
 function setupEventListeners() {
     // Connexion
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-    
+
     // Navigation tableau de bord
     document.getElementById('registreBtn').addEventListener('click', () => {
         showScreen('registreScreen');
         updateRegistreStats();
     });
-    
     document.getElementById('comptabiliteBtn').addEventListener('click', () => {
         showScreen('comptabiliteScreen');
         updateComptabiliteStats();
     });
-    
     document.getElementById('statistiquesBtn').addEventListener('click', () => {
         showScreen('statistiquesScreen');
         updateStatistiques();
     });
-    
     document.getElementById('parametresBtn').addEventListener('click', () => {
         showScreen('parametresScreen');
     });
-    
-    // Retour
+
+    // Boutons de retour
     document.getElementById('backFromRegistre').addEventListener('click', () => showScreen('dashboardScreen'));
     document.getElementById('backFromComptabilite').addEventListener('click', () => showScreen('dashboardScreen'));
     document.getElementById('backFromStatistiques').addEventListener('click', () => showScreen('dashboardScreen'));
     document.getElementById('backFromParametres').addEventListener('click', () => showScreen('dashboardScreen'));
-    
-    // Registre
-    document.getElementById('newSubscriptionBtn').addEventListener('click', openSubscriptionModal);
+
+    // Registre Modals & Formulaires
+    document.getElementById('newSubscriptionBtn').addEventListener('click', () => openSubscriptionModal());
     document.getElementById('closeModal').addEventListener('click', closeSubscriptionModal);
     document.getElementById('cancelModal').addEventListener('click', closeSubscriptionModal);
     document.getElementById('subscriptionForm').addEventListener('submit', handleSubscriptionSubmit);
     document.getElementById('searchClients').addEventListener('input', filterClients);
-    
-    // Comptabilité
-    document.getElementById('newOperationBtn').addEventListener('click', openOperationModal);
+
+    // Comptabilité Modals & Formulaires
+    document.getElementById('newOperationBtn').addEventListener('click', () => openOperationModal());
     document.getElementById('closeOperationModal').addEventListener('click', closeOperationModal);
     document.getElementById('cancelOperationModal').addEventListener('click', closeOperationModal);
     document.getElementById('operationForm').addEventListener('submit', handleOperationSubmit);
-    
+
     // Paramètres
     document.getElementById('changePasswordBtn').addEventListener('click', handleChangePassword);
     document.getElementById('backupBtn').addEventListener('click', handleBackup);
@@ -107,17 +100,17 @@ function setupEventListeners() {
 }
 
 // ============================================
-// CONNEXION / DÉCONNEXION
+// CONNEXION / DÉCONNEXION (CORRIGÉ POUR MOBILE)
 // ============================================
-
 function handleLogin(e) {
     e.preventDefault();
-    
     const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorElement = document.getElementById('loginError');
     
-    if (password === defaultPassword) {
+    // .trim() enlève les espaces de fin/début, .toLowerCase() gère la majuscule auto sur mobile
+    const password = document.getElementById('password').value.trim().toLowerCase();
+    const errorElement = document.getElementById('loginError');
+
+    if (password === defaultPassword.toLowerCase()) {
         currentUser = username;
         localStorage.setItem('currentUser', username);
         document.getElementById('loginForm').reset();
@@ -140,12 +133,11 @@ function handleLogout() {
 // ============================================
 // REGISTRE CANAL+
 // ============================================
-
 function openSubscriptionModal(editId = null) {
     const modal = document.getElementById('subscriptionModal');
     const form = document.getElementById('subscriptionForm');
     const modalTitle = document.getElementById('modalTitle');
-    
+
     if (editId) {
         const client = clients.find(c => c.id === editId);
         document.getElementById('clientName').value = client.name;
@@ -161,7 +153,6 @@ function openSubscriptionModal(editId = null) {
         delete form.dataset.editId;
         document.getElementById('startDate').valueAsDate = new Date();
     }
-    
     modal.classList.add('active');
 }
 
@@ -172,7 +163,6 @@ function closeSubscriptionModal() {
 
 function handleSubscriptionSubmit(e) {
     e.preventDefault();
-    
     const name = document.getElementById('clientName').value;
     const phone = document.getElementById('clientPhone').value;
     const decoder = document.getElementById('decoderNumber').value;
@@ -180,32 +170,17 @@ function handleSubscriptionSubmit(e) {
     const duration = parseInt(document.getElementById('duration').value);
     
     const endDate = addDays(new Date(startDate), duration);
-    
     const editId = this.dataset.editId;
-    
+
     if (editId) {
-        const index = clients.findIndex(c => c.id === editId);
-        clients[index] = {
-            id: editId,
-            name,
-            phone,
-            decoder,
-            startDate,
-            endDate: endDate.toISOString().split('T')[0],
-            duration
-        };
+        const index = clients.findIndex(c => c.id === parseInt(editId));
+        if(index !== -1) {
+            clients[index] = { id: parseInt(editId), name, phone, decoder, startDate, endDate: endDate.toISOString().split('T')[0], duration };
+        }
     } else {
-        clients.push({
-            id: Date.now(),
-            name,
-            phone,
-            decoder,
-            startDate,
-            endDate: endDate.toISOString().split('T')[0],
-            duration
-        });
+        clients.push({ id: Date.now(), name, phone, decoder, startDate, endDate: endDate.toISOString().split('T')[0], duration });
     }
-    
+
     saveToLocalStorage();
     closeSubscriptionModal();
     updateRegistreTable();
@@ -215,19 +190,16 @@ function handleSubscriptionSubmit(e) {
 function updateRegistreTable() {
     const tbody = document.getElementById('clientsTableBody');
     tbody.innerHTML = '';
-    
+
     const filtered = clients.filter(client => {
         const search = document.getElementById('searchClients').value.toLowerCase();
-        return client.name.toLowerCase().includes(search) || 
-               client.phone.includes(search);
+        return client.name.toLowerCase().includes(search) || client.phone.includes(search);
     });
-    
+
     filtered.forEach(client => {
         const status = getSubscriptionStatus(client.endDate);
-        const statusClass = status === 'Actif' ? 'status-actif' : 
-                           status === 'Expire bientôt' ? 'status-expiration' : 
-                           'status-expire';
-        
+        const statusClass = status === 'Actif' ? 'status-actif' : status === 'Expire bientôt' ? 'status-expiration' : 'status-expire';
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${client.name}</td>
@@ -260,22 +232,26 @@ function filterClients() {
     updateRegistreTable();
 }
 
+// Correction ici pour s'assurer que la table s'actualise correctement au chargement des stats
 function updateRegistreStats() {
     const active = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Actif').length;
     const expired = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Expiré').length;
-    
+
     document.getElementById('totalClients').textContent = clients.length;
     document.getElementById('activeSubscriptions').textContent = active;
     document.getElementById('expiredSubscriptions').textContent = expired;
-    
     updateRegistreTable();
 }
 
 function getSubscriptionStatus(endDate) {
     const today = new Date();
+    today.setHours(0,0,0,0);
     const end = new Date(endDate);
-    const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    end.setHours(0,0,0,0);
     
+    const diffTime = end - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
     if (diffDays < 0) return 'Expiré';
     if (diffDays <= 7) return 'Expire bientôt';
     return 'Actif';
@@ -284,11 +260,10 @@ function getSubscriptionStatus(endDate) {
 // ============================================
 // COMPTABILITÉ
 // ============================================
-
 function openOperationModal(editId = null) {
     const modal = document.getElementById('operationModal');
     const form = document.getElementById('operationForm');
-    
+
     if (editId) {
         const operation = operations.find(o => o.id === editId);
         document.getElementById('operationDate').value = operation.date;
@@ -304,7 +279,6 @@ function openOperationModal(editId = null) {
         document.getElementById('operationDate').valueAsDate = new Date();
         delete form.dataset.editId;
     }
-    
     modal.classList.add('active');
 }
 
@@ -315,7 +289,6 @@ function closeOperationModal() {
 
 function handleOperationSubmit(e) {
     e.preventDefault();
-    
     const date = document.getElementById('operationDate').value;
     const type = document.getElementById('operationType').value;
     const category = document.getElementById('operationCategory').value;
@@ -325,20 +298,16 @@ function handleOperationSubmit(e) {
     const observations = document.getElementById('operationObservations').value;
     
     const editId = this.dataset.editId;
-    
+
     if (editId) {
-        const index = operations.findIndex(o => o.id === editId);
-        operations[index] = {
-            id: editId,
-            date, type, category, description, amount, person, observations
-        };
+        const index = operations.findIndex(o => o.id === parseInt(editId));
+        if(index !== -1) {
+            operations[index] = { id: parseInt(editId), date, type, category, description, amount, person, observations };
+        }
     } else {
-        operations.push({
-            id: Date.now(),
-            date, type, category, description, amount, person, observations
-        });
+        operations.push({ id: Date.now(), date, type, category, description, amount, person, observations });
     }
-    
+
     saveToLocalStorage();
     closeOperationModal();
     updateComptabiliteTable();
@@ -357,12 +326,12 @@ function deleteOperation(id) {
 function updateComptabiliteTable() {
     const tbody = document.getElementById('operationsTableBody');
     tbody.innerHTML = '';
-    
+
     operations.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(op => {
         const row = document.createElement('tr');
         const amountClass = op.type === 'Entrée' ? 'positive' : 'negative';
         const amountPrefix = op.type === 'Entrée' ? '+' : '-';
-        
+
         row.innerHTML = `
             <td>${formatDate(op.date)}</td>
             <td>${op.type}</td>
@@ -382,21 +351,21 @@ function updateComptabiliteTable() {
 
 function updateComptabiliteStats() {
     const today = new Date().toISOString().split('T')[0];
-    
+
     const entreeDay = operations
         .filter(o => o.date === today && o.type === 'Entrée')
         .reduce((sum, o) => sum + o.amount, 0);
-    
+
     const retraitDay = operations
         .filter(o => o.date === today && o.type === 'Retrait')
         .reduce((sum, o) => sum + o.amount, 0);
-    
+
     const soldeDay = entreeDay - retraitDay;
-    
+
     const soldeGeneral = operations.reduce((sum, o) => {
         return sum + (o.type === 'Entrée' ? o.amount : -o.amount);
     }, 0);
-    
+
     document.getElementById('entreeDay').textContent = entreeDay.toFixed(2) + ' MAD';
     document.getElementById('retraitDay').textContent = retraitDay.toFixed(2) + ' MAD';
     document.getElementById('soldeDay').textContent = soldeDay.toFixed(2) + ' MAD';
@@ -408,30 +377,29 @@ function updateComptabiliteStats() {
 // ============================================
 // STATISTIQUES
 // ============================================
-
 function updateStatistiques() {
     const active = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Actif').length;
     const expired = clients.filter(c => getSubscriptionStatus(c.endDate) === 'Expiré').length;
-    
+
     const today = new Date().toISOString().split('T')[0];
     const currentMonth = new Date().toISOString().slice(0, 7);
-    
+
     const revenueDay = operations
         .filter(o => o.date === today && o.type === 'Entrée')
         .reduce((sum, o) => sum + o.amount, 0);
-    
+
     const revenueMonth = operations
         .filter(o => o.date.startsWith(currentMonth) && o.type === 'Entrée')
         .reduce((sum, o) => sum + o.amount, 0);
-    
+
     const expensesMonth = operations
         .filter(o => o.date.startsWith(currentMonth) && o.type === 'Retrait')
         .reduce((sum, o) => sum + o.amount, 0);
-    
+
     const balance = operations.reduce((sum, o) => {
         return sum + (o.type === 'Entrée' ? o.amount : -o.amount);
     }, 0);
-    
+
     document.getElementById('statTotalClients').textContent = clients.length;
     document.getElementById('statActiveSubscriptions').textContent = active;
     document.getElementById('statExpiredSubscriptions').textContent = expired;
@@ -444,30 +412,24 @@ function updateStatistiques() {
 // ============================================
 // PARAMÈTRES
 // ============================================
-
 function handleChangePassword() {
     const newPassword = document.getElementById('newPassword').value;
-    
     if (!newPassword) {
         alert('Entrez un nouveau mot de passe!');
         return;
     }
-    
     if (newPassword.length < 4) {
         alert('Le mot de passe doit avoir au moins 4 caractères!');
         return;
     }
-    
+
     const currentPassword = prompt('Entrez le mot de passe actuel:');
-    
     if (currentPassword !== defaultPassword) {
         alert('Mot de passe incorrect!');
         return;
     }
-    
-    // Dans une vraie app, il faudrait stocker ça de manière sécurisée
-    // Pour cette version simple, on l'affiche juste
-    alert('Nouveau mot de passe défini: ' + newPassword + '\n\n(Note: Dans une vraie app, il faudrait le sauvegarder de manière sécurisée)');
+
+    alert('Nouveau mot de passe défini : ' + newPassword + '\n\n(Note: Version de démonstration, la persistance avancée du mot de passe requiert un stockage backend).');
     document.getElementById('newPassword').value = '';
 }
 
@@ -477,10 +439,10 @@ function handleBackup() {
         operations,
         date: new Date().toLocaleString()
     };
-    
     const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
+    
     const link = document.createElement('a');
     link.href = url;
     link.download = `sauvegarde-canal-${new Date().toISOString().split('T')[0]}.json`;
@@ -490,7 +452,7 @@ function handleBackup() {
 function handleRestore(e) {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
         try {
@@ -500,7 +462,7 @@ function handleRestore(e) {
             saveToLocalStorage();
             alert('✅ Sauvegarde restaurée avec succès!');
         } catch (error) {
-            alert('❌ Erreur lors de la restauration!');
+            alert('❌ Erreur lors de la restauration du fichier!');
         }
     };
     reader.readAsText(file);
@@ -520,11 +482,10 @@ function handleClearData() {
 // ============================================
 // UTILITAIRES
 // ============================================
-
 function setDefaultDateToday() {
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('startDate').valueAsDate = new Date();
-    document.getElementById('operationDate').valueAsDate = new Date();
+    document.getElementById('startDate').value = today;
+    document.getElementById('operationDate').value = today;
 }
 
 function formatDate(dateString) {
